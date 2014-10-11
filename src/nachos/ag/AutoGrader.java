@@ -50,7 +50,7 @@ public class AutoGrader {
 
 	run();
     }
-
+    /**根据一开始运行后面附加的参数来确定一些输出*/
     private void extractArguments(String[] args) {
 	String testArgsString = Config.getString("AutoGrader.testArgs");
 	if (testArgsString == null) {

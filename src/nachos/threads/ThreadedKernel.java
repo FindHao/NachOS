@@ -35,7 +35,7 @@ public class ThreadedKernel extends Kernel {
 	new KThread(null);
 
 	alarm  = new Alarm();
-
+//开中断
 	Machine.interrupt().enable();
     }
 

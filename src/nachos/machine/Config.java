@@ -33,14 +33,18 @@ public final class Config {
 	    File file = new File(configFile);
 	    Reader reader = new FileReader(file);
 	    StreamTokenizer s = new StreamTokenizer(reader);
-
+//   重置此标记生成器的语法表，使所有字符都成为“普通”字符。
 	    s.resetSyntax();
+	    //指定 low <= c <= high 范围中的所有字符 c 都是空白字符。
 	    s.whitespaceChars(0x00, 0x20);
+	    // 指定 low <= c <= high 范围中的所有字符 c 都是文字成分。  
 	    s.wordChars(0x21, 0xFF);
+	    // 确定是否将行末尾视为标记。
 	    s.eolIsSignificant(true);
+	    // 指定该字符参数启动一个单行注释。
 	    s.commentChar('#');
+	    // 指定此字符的匹配对分隔此标记生成器中的字符串常量。
 	    s.quoteChar('"');
-
 	    int line = 1;
 
 	    s.nextToken();
