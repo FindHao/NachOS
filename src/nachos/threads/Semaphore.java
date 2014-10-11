@@ -87,15 +87,15 @@ public class Semaphore {
      * Test if this module is working.
      */
     public static void selfTest() {
-	Semaphore ping = new Semaphore(0);
-	Semaphore pong = new Semaphore(0);
-
-	new KThread(new PingTest(ping, pong)).setName("ping").fork();
-
-	for (int i=0; i<10; i++) {
-	    ping.V();
-	    pong.P();
-	}
+		Semaphore ping = new Semaphore(0);
+		Semaphore pong = new Semaphore(0);
+	
+		new KThread(new PingTest(ping, pong)).setName("ping").fork();
+	
+		for (int i=0; i<10; i++) {
+		    ping.V();
+		    pong.P();
+		}
     }
 
     private int value;

@@ -38,13 +38,14 @@ public class AutoGrader {
 	extractArguments(args);
 
 	System.out.print(" grader");
-
+	//初始化是空的。。。一个假的初始化
 	init();
 
 	System.out.print("\n");	
-
+	//构建内核
 	kernel =
 	    (Kernel) Lib.constructObject(Config.getString("Kernel.kernel"));
+	//内核初始化！！！
 	kernel.initialize(args);
 
 	run();

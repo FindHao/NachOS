@@ -24,9 +24,9 @@ public final class Machine {
 	Machine.args = args;
 
 	processArgs();
-
+	//加载配置文件
 	Config.load(configFileName);
-
+	//这个获取当前路径的方法感觉还挺巧妙
 	// get the current directory (.)
 	baseDirectory = new File(new File("").getAbsolutePath());
 	// get the nachos directory (./nachos)
@@ -48,7 +48,7 @@ public final class Machine {
 	privilege = securityManager.getPrivilege();
 
 	privilege.machine = new MachinePrivilege();
-
+	//TCB的介绍：鼠标放上去就可以看到注释，官方的很简单的英文
 	TCB.givePrivilege(privilege);
 	privilege.stats = stats;
 
@@ -112,7 +112,7 @@ public final class Machine {
 
 	return result;
     }
-
+    /**运行时根据不同的命令参数添加不同的标记*/
     private static void processArgs() {
 	for (int i=0; i<args.length; ) {
 	    String arg = args[i++];

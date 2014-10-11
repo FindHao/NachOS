@@ -12,7 +12,7 @@ import java.security.PrivilegedAction;
  * A TCB simulates the low-level details necessary to create, context-switch,
  * and destroy Nachos threads. Each TCB controls an underlying JVM Thread
  * object.
- *
+ *TCB模拟了 创建，交换，销毁Nachos线程的底层实现。每个TCB对应了一个JVM线程对象。
  * <p>
  * Do not use any methods in <tt>java.lang.Thread</tt>, as they are not
  * compatible with the TCB API. Most <tt>Thread</tt> methods will either crash
@@ -54,8 +54,9 @@ public final class TCB {
 	 *
 	 * The only way this assumption could be broken is if one of our
 	 * non-Nachos threads used the TCB code.
+	 * 我们不会用同步，因为无论什么时候调用start，一个时刻只允许一个TCB运行。
 	 */
-	
+	//进行一些简单的判断，调用lib库里的函数，如果有问题就会throw 异常
 	/* Make sure this TCB has not already been started. If done is false,
 	 * then destroy() has not yet set javaThread back to null, so we can
 	 * use javaThread as a reliable indicator of whether or not start() has
@@ -82,7 +83,7 @@ public final class TCB {
 	 * runningThreads, and we save the target closure.
 	 */
 	runningThreads.add(this);
-
+	//保存传入的target runnable
 	this.target = target;
 
 	if (!isFirstTCB) {
@@ -92,7 +93,7 @@ public final class TCB {
 	    tcbTarget = new Runnable() {
 		    public void run() { threadroot(); }
 		};
-
+		//创建jvm线程
 	    privilege.doPrivileged(new Runnable() {
 		    public void run() { javaThread = new Thread(tcbTarget); }
 		});
@@ -103,14 +104,18 @@ public final class TCB {
 	     * to wake us up from threadroot(). Once the new TCB wakes us up,
 	     * it's safe to context switch to the new TCB.
 	     */
+	    //主线程的状态设置
 	    currentTCB.running = false;
-	    
+	    //子线程
 	    this.javaThread.start();
+		//主线程wait
 	    currentTCB.waitForInterrupt();
 	}
 	else {
 	    /* This is the first TCB, so we don't need to make a new Java
+	     * 
 	     * thread to run it; we just steal the current Java thread.
+	     * 通过javaThead 来进行资源到前台
 	     */
 	    javaThread = Thread.currentThread();
 
@@ -157,7 +162,7 @@ public final class TCB {
 
 	TCB previous = currentTCB;
 	previous.running = false;
-	
+	//选中的要执行的
 	this.interrupt();
 	previous.yield();
     }
@@ -184,6 +189,7 @@ public final class TCB {
 	currentTCB.running = false;
 
 	this.interrupt();
+
 	currentTCB.waitForInterrupt();
 	
 	this.javaThread = null;
@@ -206,7 +212,7 @@ public final class TCB {
 	return (currentTCB != null &&
 		Thread.currentThread() == currentTCB.javaThread);
     }
-
+    /**创建线程之后默认的执行程序*/
     private void threadroot() {
 	// this should be running the current thread
 	Lib.assertTrue(javaThread == Thread.currentThread());
@@ -218,8 +224,9 @@ public final class TCB {
 	     * sleep. All we have to do is wake up the current TCB and then
 	     * wait to get woken up by contextSwitch() or destroy().
 	     */
-	    
+	    //此时currentTCB还是主线程，唤醒主线程
 	    currentTCB.interrupt();
+	    //然后子线程睡
 	    this.yield();
 	}
 	else {
@@ -269,11 +276,11 @@ public final class TCB {
      * this TCB and return.
      */
     private void yield() {
-	waitForInterrupt();
-	
-	if (done) {
-	    currentTCB.interrupt();
-	    throw new ThreadDeath();
+		waitForInterrupt();
+		
+		if (done) {
+		    currentTCB.interrupt();
+		    throw new ThreadDeath();
 	}
 
 	currentTCB = this;
@@ -286,6 +293,7 @@ public final class TCB {
      * process of starting and destroying TCBs, as well as in context switching
      * from this TCB to another. We don't rely on <tt>currentTCB</tt>, since it
      * is updated by <tt>contextSwitch()</tt> before we get called.
+     * 这是默认的睡眠方法
      */
     private synchronized void waitForInterrupt() {
 	while (!running) {
@@ -301,6 +309,7 @@ public final class TCB {
      * TCB.
      */
     private synchronized void interrupt() {
+
 	running = true;
 	notify();
     }
@@ -375,7 +384,7 @@ public final class TCB {
     /**
      * A reference to the Java thread bound to this TCB. It is initially
      * <tt>null</tt>, assigned to a Java thread in <tt>start(Runnable)</tt>,
-     * and set to <tt>null</tt> again in <tt>destroy()</tt>.
+     * and set to <tt>null</tt> again in <tt>destroy()</tt>.这个javaThread就是与每个TCB绑定的（对应的映射的）jvm线程
      */
     private Thread javaThread = null;
 

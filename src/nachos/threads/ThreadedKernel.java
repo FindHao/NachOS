@@ -46,8 +46,11 @@ public class ThreadedKernel extends Kernel {
      * tests here.
      */	
     public void selfTest() {
+    //线程测试
 	KThread.selfTest();
+	//信号量
 	Semaphore.selfTest();
+	//
 	SynchList.selfTest();
 	if (Machine.bank() != null) {
 	    ElevatorBank.selfTest();

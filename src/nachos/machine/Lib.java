@@ -24,6 +24,7 @@ class AssertionFailureError extends Error {
 
 /**
  * Provides miscellaneous library routines.
+ * 提供一些库函数
  */
 public final class Lib {
     /**

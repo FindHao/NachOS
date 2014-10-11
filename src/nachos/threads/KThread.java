@@ -41,6 +41,9 @@ public class KThread {
     /**
      * Allocate a new <tt>KThread</tt>. If this is the first <tt>KThread</tt>,
      * create an idle thread as well.
+     * 后面默认的创建顺序：
+     * 先创建kthread--tcb--jvm
+     * 第一个不是
      */
     public KThread() {
 	if (currentThread != null) {
@@ -54,7 +57,7 @@ public class KThread {
 	    tcb = TCB.currentTCB();
 	    name = "main";
 	    restoreState();
-
+	    
 	    createIdleThread();
 	}
     }
@@ -134,6 +137,7 @@ public class KThread {
      * are running concurrently: the current thread (which returns from the
      * call to the <tt>fork</tt> method) and the other thread (which executes
      * its target's <tt>run</tt> method).
+     * 真正创建jvm的thread
      */
     public void fork() {
 	Lib.assertTrue(status == statusNew);
@@ -141,9 +145,9 @@ public class KThread {
 	
 	Lib.debug(dbgThread,
 		  "Forking thread: " + toString() + " Runnable: " + target);
-
+	//关中断
 	boolean intStatus = Machine.interrupt().disable();
-
+	//由此进入TCB模块
 	tcb.start(new Runnable() {
 		public void run() {
 		    runThread();
@@ -151,7 +155,7 @@ public class KThread {
 	    });
 
 	ready();
-	
+	//开中断
 	Machine.interrupt().restore(intStatus);
     }
 
@@ -212,6 +216,8 @@ public class KThread {
      * itself to the ready queue and switch to the next thread. On return,
      * restores interrupts to the previous state, in case <tt>yield()</tt> was
      * called with interrupts disabled.
+     * 线程睡，并执行下一个就绪线程
+     * 放弃cpu
      */
     public static void yield() {
 	Lib.debug(dbgThread, "Yielding thread: " + currentThread.toString());
@@ -297,7 +303,7 @@ public class KThread {
 	idleThread.setName("idle");
 
 	Machine.autoGrader().setIdleThread(idleThread);
-	
+	//真正jvm的线程，kthread-->tcb-->jvm线程
 	idleThread.fork();
     }
     
@@ -307,6 +313,7 @@ public class KThread {
      */
     private static void runNextThread() {
 	KThread nextThread = readyQueue.nextThread();
+	//没有就绪线程
 	if (nextThread == null)
 	    nextThread = idleThread;
 
@@ -337,15 +344,19 @@ public class KThread {
 	Lib.assertTrue(Machine.interrupt().disabled());
 
 	Machine.yield();
-
+	//保存状态，以备恢复
 	currentThread.saveState();
-
+	//打印信息，根据命令行参数
 	Lib.debug(dbgThread, "Switching from: " + currentThread.toString()
 		  + " to: " + toString());
 
 	currentThread = this;
-
+	//测试输出切换过程
+	System.out.println("before switch thread_id:"+Thread.currentThread());
+	
 	tcb.contextSwitch();
+	
+	System.out.println("after switch thread_id:"+Thread.currentThread());
 
 	currentThread.restoreState();
     }
