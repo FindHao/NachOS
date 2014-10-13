@@ -290,9 +290,10 @@ public class KThread {
      * and <tt>runNextThread()</tt> is called, it will run the idle thread. The
      * idle thread must never block, and it will only be allowed to run when
      * all other threads are blocked.
-     *
+     *创建闲逛线程。无论何时，只要就绪队列没有线程了，而runNextThread又被调用，那么，闲逛线程将要运行。闲逛线程绝对不能被锁住，并且只能在其他线程都锁住的时候运行。
      * <p>
      * Note that <tt>ready()</tt> never adds the idle thread to the ready set.
+     * 闲逛线程不会被加入就绪队列
      */
     private static void createIdleThread() {
 	Lib.assertTrue(idleThread == null);
@@ -364,6 +365,7 @@ public class KThread {
     /**
      * Prepare this thread to be run. Set <tt>status</tt> to
      * <tt>statusRunning</tt> and check <tt>toBeDestroyed</tt>.
+     * 更新一下这个准备运行的线程的状态
      */
     protected void restoreState() {
 	Lib.debug(dbgThread, "Running thread: " + currentThread.toString());

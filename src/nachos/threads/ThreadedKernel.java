@@ -32,6 +32,7 @@ public class ThreadedKernel extends Kernel {
 	    fileSystem = null;
 
 	// start threading
+	//传入一个null有什么用？？？
 	new KThread(null);
 
 	alarm  = new Alarm();

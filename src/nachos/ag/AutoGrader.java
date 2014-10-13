@@ -148,7 +148,7 @@ public class AutoGrader {
 
     void init() {
     }
-    
+    /**从这里引出一个*/
     void run() {
 	kernel.selfTest();
 	kernel.run();

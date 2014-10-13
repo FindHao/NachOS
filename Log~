@@ -23,8 +23,32 @@
 
 
 Config类是对config文件的读入处理，通过lib的constructObject来实现Kernel的替换。
-在pro1中，真正的kernel是ThreadedKernel
+在pro1中，真正的kernel是ThreadedKernel。
 
 Lib只是一些函数的集合，都集中在一块，做成库。方便调用。
 
+
+2014年10月13日 22时01分48秒 
+autograder那里在构建之后，作为实参传入的时候（start），进行了大量的操作，
+
+threadedkernel里面new kthread的时候，传入一个null有什么用？
+
+
+2-1autograde.start
+	2-1-1大量的初始化工作：
+		2-1-1-1kernel的初始化：
+			new KThread(null);检测到是第一个Kthread，那么还会创建一个闲逛线程。
+*创建闲逛线程：
+new KThread的时候传入的是new Runnable() {
+	    public void run() { while (true) yield(); }
+	}，带参数的构造函数则调用无参构造函数，然后new一个TCB
+然后是闲逛线程的fork：
+	关中断；
+	进入TCB的start模块：
+
+	
+
+		2-1-1-2 autograder的run
+			2-1-1-2-1kernel.selfTest();即ThreadedKernel的selfTest，三个selfTest，
+		
 
