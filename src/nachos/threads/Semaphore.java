@@ -20,6 +20,10 @@ import nachos.machine.*;
  * because by the time you get the value, a context switch might have occurred,
  * and some other thread might have called <tt>P()</tt> or <tt>V()</tt>, so the
  * true value might now be different.
+ * 一个信号量是无符号的同步原语，只有两个操作：
+ * P:等待信号量的值增加到大于0，才--；
+ * V:增加信号量的值，并且尝试唤醒在P操作中等待的线程
+ * note:此API不允许一个线程来直接读取信号量的值，因为即使读了之后，可能系统立即就会切换上下文，然后信号量的值就改变了
  */
 public class Semaphore {
     /**

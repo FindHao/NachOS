@@ -19,7 +19,7 @@ public class AutoGrader {
      */
     public AutoGrader() {
     }
-
+    Object a;
     /**
      * Start this autograder. Extract the <tt>-#</tt> arguments, call
      * <tt>init()</tt>, load and initialize the kernel, and call

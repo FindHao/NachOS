@@ -104,7 +104,6 @@ public final class TCB {
 	     * to wake us up from threadroot(). Once the new TCB wakes us up,
 	     * it's safe to context switch to the new TCB.
 	     */
-	    //主线程的状态设置
 	    currentTCB.running = false;
 	    //子线程
 	    this.javaThread.start();
@@ -224,7 +223,6 @@ public final class TCB {
 	     * sleep. All we have to do is wake up the current TCB and then
 	     * wait to get woken up by contextSwitch() or destroy().
 	     */
-	    //此时currentTCB还是主线程，唤醒主线程
 	    currentTCB.interrupt();
 	    //然后子线程睡
 	    this.yield();
@@ -240,7 +238,6 @@ public final class TCB {
 
 	try {
 	    target.run();
-
 	    // no way out of here without going throw one of the catch blocks
 	    Lib.assertNotReached();
 	}
